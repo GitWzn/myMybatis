@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 加载资源配置文件 配置数据源相关的信息 -->
+	<properties resource="db.properties" />
+	<!-- 给全限定名称去别名 -->
+	<typeAliases>
+		<!-- 给指定类的全限定名称取别名   一般取类名 -->
+		<!-- <typeAlias type="com.wzn.Bean.User" alias="User" />
+		<typeAlias type="com.wzn.Bean.UserInfo" alias="UserInfo" /> -->
+		<!-- 指定包下的类的权限定名称设置默认的别名(类名) -->
+		<package name="com.wzn.Bean" />
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<!-- 使用jdbc事务管理，事务控制由mybatis -->
+			<transactionManager type="JDBC" />
+			<!-- 数据库连接池，由mybatis管理 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 绑定映射文件 -->
+	<mappers>
+		<!-- 绑定资源目录下的映射文件 -->
+		<mapper resource="mappingFile/UserMapper.xml" />
+		<mapper resource="mappingFile/IUserDao.xml" />
+		<mapper resource="mappingFile/IUserInfoDao.xml" />
+		<mapper resource="mappingFile/ICustomerDao.xml" />
+		<mapper resource="mappingFile/IOrderDao.xml" />
+		<mapper resource="mappingFile/IAuthorDao.xml" />
+		<mapper resource="mappingFile/IBookDao.xml" />
+		<!-- <mapper resource="com/wzn/dao/IUserDao.xml" /> -->
+		<!-- 如果映射文件在包下 绑定指定包下的映射文件 通用 -->
+		<!-- <package name="com.wzn.dao"/> -->
+	</mappers>
+</configuration>

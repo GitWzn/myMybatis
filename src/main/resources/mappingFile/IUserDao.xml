@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 空间名称要使用接口的全限定名 -->
+<mapper namespace="com.wzn.dao.IUserDao">
+	<!-- 全局设置二级缓存机制   意思是在这个命名空间下的查询操作都已经设置了二级缓存机制  -->
+	<cache />
+	<!-- 映射结果集 -->
+	<resultMap type="User" id="UserResultMap">
+		<id property="uid" column="uid"/>	
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+		<result property="birthday" column="birthday"/>
+		<result property="u_sex" column="sex"/>
+		<!-- 
+			property: 级联的对象   关联的对象
+			javaType: 关联对象的类型
+			column: 两个数据表以哪个字段进行关联
+			resultMap: 关联的结果集
+			select: 关联对应的查询
+		 -->
+		 <!-- 方法一： 可以使用引用关联对象的结果集 -->
+		<!-- <association property="userInfo" javaType="com.wzn.Bean.UserInfo" 
+				column="uid" resultMap="com.wzn.dao.IUserInfoDao.UserInfoResultMap"/> -->
+		<!-- 方法二：在此处定义结果集 -->
+		<!-- <association property="userInfo" javaType="com.wzn.Bean.UserInfo" column="uid">
+			<id property="id" column="id"/>
+			<result property="uid" column="uid"/>
+			<result property="email" column="email"/>
+			<result property="phone" column="phone"/>
+			<result property="address" column="address"/>
+		</association> -->
+		<!-- 方法三：使用两边查询的方式  使用关联对应的查询功能 -->
+		<association property="userInfo" javaType="UserInfo" column="uid" select="com.wzn.dao.IUserInfoDao.findUserInfo" />
+	</resultMap>
+	<!-- id必须是接口中的定义的方法名 -->
+	<!-- <select id="findAllUser" resultMap="UserResultMap">
+		SELECT * FROM user AS u LEFT JOIN userinfo AS ui ON u.uid = ui.uid
+	</select> -->
+	<select id="findAllUser" resultMap="UserResultMap">
+		SELECT * FROM user
+	</select>
+	
+	<insert id="saveUser" parameterType="User" 
+			keyProperty="uid" useGeneratedKeys="true">
+		insert into `user`(username, password, sex, birthday) 
+			values(#{username}, #{password}, #{u_sex}, #{birthday})
+	</insert>
+</mapper>
+

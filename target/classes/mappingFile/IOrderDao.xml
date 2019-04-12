@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 空间名称要使用接口的全限定名 -->
+<mapper namespace="com.wzn.dao.IOrderDao">
+	<!-- 全局设置二级缓存机制 -->
+	<cache />
+	<resultMap type="Order" id="OrderResultMap">
+		<id property="oid" column="oid"/>
+		<result property="orderNum" column="orderNum"/>
+		<result property="productName" column="productName"/>
+		<result property="price" column="price"/>
+		<result property="count" column="count"/>
+		<result property="cid" column="cid"/>
+	</resultMap>
+	<select id="findAllOrder" resultMap="OrderResultMap">
+		select * from `order`
+	</select>
+</mapper>
+

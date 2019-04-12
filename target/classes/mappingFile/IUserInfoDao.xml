@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 空间名称要使用接口的全限定名 -->
+<mapper namespace="com.wzn.dao.IUserInfoDao">
+	<!-- 全局设置二级缓存机制 -->
+	<cache />
+	<resultMap type="UserInfo" id="UserInfoResultMap">
+		<id property="id" column="id"/>
+		<result property="uid" column="uid"/>
+		<result property="email" column="email"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+	</resultMap>
+	
+	<select id="findUserInfo" parameterType="int" resultMap="UserInfoResultMap">
+		select * from userinfo where uid = #{uid}
+	</select>
+</mapper>
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 空间名称要使用接口的全限定名 -->
+<mapper namespace="com.wzn.dao.IBookDao">
+	<!-- 全局设置二级缓存机制 -->
+	<cache />
+	<resultMap type="Book" id="BookResultMap">
+		<id property="bid" column="bid" />
+		<result property="bookName" column="bookName" />
+		<result property="price" column="price" />
+		<collection property="authors" javaType="java.util.List" ofType="Author" 
+			resultMap="com.wzn.dao.IAuthorDao.AuthorResultMap" />
+	</resultMap>
+	<select id="findAllBook" resultMap="BookResultMap">
+		SELECT
+		a.aid,a.`name`,a.age,b.bid,b.bookName,b.price FROM book AS b,author
+		AS
+		a,bookauthor AS ba WHERE ba.bid = b.bid AND ba.aid = a.aid
+	</select>
+</mapper>
+

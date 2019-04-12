@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 空间名称要使用接口的全限定名 -->
+<mapper namespace="com.wzn.dao.ICustomerDao">
+	<!-- 全局设置二级缓存机制 -->
+	<cache />
+	<resultMap type="Customer" id="CustomerReaultMap">
+		<id property="cid" column="cid" />
+		<result property="c_name" column="c_name" />
+		<result property="c_age" column="c_age" />
+		<result property="c_money" column="c_money" />
+		<collection property="orders" column="cid" javaType="java.util.List"
+			ofType="com.wzn.Bean.Order" resultMap="com.wzn.dao.IOrderDao.OrderResultMap" />
+		<!-- <collection property="orders" column="cid" javaType="java.util.List"
+			ofType="com.wzn.Bean.Order">
+			<id property="oid" column="oid" />
+			<result property="orderNum" column="orderNum" />
+			<result property="productName" column="productName" />
+			<result property="price" column="price" />
+			<result property="count" column="count" />
+			<result property="cid" column="cid" />
+		</collection> -->
+	</resultMap>
+	<select id="findAllCustomer" resultMap="CustomerReaultMap">
+		SELECT * FROM `customer`
+		AS c LEFT JOIN `order` AS o ON c.cid = o.cid
+	</select>
+</mapper>
+

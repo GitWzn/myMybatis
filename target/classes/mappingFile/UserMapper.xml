@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">	
+<!-- 
+	namespace叫空间名称，是给当前映射文件起一个名称
+	通过这个名称来指定使用的是哪一个映射文件
+	一般情况下名称是与之相关的全限定名称
+ -->
+<mapper namespace="com.wzn.userOperate">
+	<!-- keyProperty: 映射主键字段
+		 useGeneratedKeys: 主键在数据库中生成后自动返回到映射类中  -->
+	<insert id="addUser" parameterType="com.wzn.Bean.User" 
+			keyProperty="uid" useGeneratedKeys="true">
+		insert into `user`(username, password, sex, birthday) 
+			values(#{username}, #{password}, #{u_sex}, #{birthday})
+	</insert>
+	<!-- 数据更新 -->
+	<update id="updateUserByUid" parameterType="java.util.HashMap">
+		update `user` set username = #{username}, password = #{password} where uid = #{uid}
+	</update>
+	<!-- 数据删除 -->
+	<delete id="deleteUserByUid" parameterType="int">
+		delete from `user` where uid = #{uid}    
+	</delete>
+	<!-- 当数据库的字段与类中的属性不一致时，返回的数据不会映射到类的属性中，类中的属性就会变成空值
+		 在实际应用中，类中的数据不一定跟数据库中的字段一致，这时我们就需要去配置映射
+		 配置自定义结果集映射 -->
+	<resultMap type="com.wzn.Bean.User" id="UserResultMap">
+		<!-- property是属性名   column是字段名    进行映射  -->
+		<result property="u_sex" column="sex"/>
+	</resultMap>
+	<!-- 查询单个数据     查询数据需要配置结果集的映射   就是查询到的数据的类型  -->
+	<select id="selectOnlyUser" parameterType="int" resultMap="UserResultMap">
+		select * from `user` where uid = #{uid}
+	</select>
+	<!-- 查询多个数据   模糊分页查询
+	 	 $符号是替代的意思，在查询时未知的参数是以占位符的形式查询，所以在条件where的后面不能出现占位符，
+	 	 											   会形成SQL语句错误，所以用替代的方式去替代占位符
+	 	 #符号是设置变量的意思，给占位符设置变量  -->
+	<select id="selectManyUser" parameterType="java.util.HashMap" resultMap="UserResultMap">
+		select * from `user` where ${cloumnName} like #{keyWord} limit #{startIndex}, #{pageSize} 
+	</select>
+	<!-- 使用if动态SQL -->
+	<select id="ifDynamicSQL" parameterType="com.wzn.Bean.User" resultMap="UserResultMap">
+		select * from `user` where 1 = 1
+		<if test="username != null">and username = #{username}</if>
+		<if test="password != null">and password = #{password}</if>
+	</select>
+	<!-- 使用choose动态SQL -->
+	<select id="chooseDynamicSQL" parameterType="com.wzn.Bean.User" resultMap="UserResultMap">
+		select * from `user` where 
+		<choose>   <!-- choose动态SQL只要一个城里就不回执行下面的判断 -->
+			<when test="username != null">username = #{username}</when>
+			<when test="password != null">password = #{password}</when>
+			<otherwise>1 = 1</otherwise> <!-- 当前面的判断条件都不满足时执行此处 -->
+		</choose>
+	</select>
+	<!-- where动态SQL -->
+	<select id="whereDynamicSQL" parameterType="com.wzn.Bean.User" resultMap="UserResultMap">
+		select * from `user`
+		<where> <!-- 动态获取where关键字  当用户给的条件都不满足时就不需要条件,即不需要出现where关键字 -->
+			<if test="username != null">and username = #{username}</if> <!-- 此时不能去掉and(关联符)  因为当一个条件成立时  where标签会自动去掉其中一个and -->
+			<if test="password != null">and password = #{password}</if>
+			<!-- <choose>   
+				<when test="username != null">username = #{username}</when>
+				<when test="password != null">password = #{password}</when>
+			</choose> -->
+		</where>
+	</select>
+	<!-- foreach动态SQL
+		 collection: 数据类型：array 表示数组   , list 表示集合 
+		 open: 遍历之前原始数据  close: 遍历之后结束数据
+		 separator: 数据间的分隔 
+		 item: 集合或数组中的元素别名  
+		 index: 索引   可以省略 -->
+	<select id="foreachDynamicSQL" parameterType="java.util.ArrayList" resultMap="UserResultMap">
+		select * from `user` where uid in
+		<foreach collection="list" open="(" close=")" separator="," item="uid">
+			#{uid}
+		</foreach>
+	</select>
+	<!-- set动态SQL -->
+	<update id="setDynamicSQL" parameterType="com.wzn.Bean.User">
+		update `user` <!-- set username = #{username}, password = #{password} --> 
+		<set>
+			<if test="username != null">username = #{username},</if>
+			<if test="password != null">password = #{password},</if>
+		</set>
+		where uid = #{uid}
+	</update>
+</mapper>
